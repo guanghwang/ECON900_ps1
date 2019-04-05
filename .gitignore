@@ -1,2 +1,5 @@
 # ignore literature
 lit/
+
+# ignore files in GHArhive folder
+GHArchive/*
