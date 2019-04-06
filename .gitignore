@@ -3,3 +3,6 @@ lit/
 
 # ignore files in GHArhive folder
 GHArchive/*
+
+# ignore token
+token/
