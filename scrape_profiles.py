@@ -29,7 +29,7 @@ print("There are {} users in the stargazer file".format(df_stargazers_row))
 
 print("Now Gathering Stargazers' GitHub Profiles...")
 
-while users_processed <= df_stargazers_row:
+while users_processed < df_stargazers_row:
     username = df_stargazers.iloc[users_processed, 1]
     # print(username)
     api = "https://api.github.com/"
