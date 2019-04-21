@@ -3,10 +3,13 @@ This code is modefied from
 minimaxir/get-profile-data-of-repo-stargazers/blob/
 
 This program collects information of given users
+
+Some users closed github accounts
 '''
 
 import datetime
 import time
+import urllib.error
 from urllib.request import Request, urlopen
 import json
 import os
@@ -35,36 +38,47 @@ def collect_profile(users_start, users_end):
 
     while users_processed < users_end:
         username = df_stargazers.iloc[users_processed, 1]
-        # print(username)
+        print(username)
         api = "https://api.github.com/"
         url = api + "users/{}?access_token={}".format(username, token)
-        req = Request(url)
-        response = urlopen(req)
-        data = json.loads(response.read())
+        try:
+            req = Request(url)
+            response = urlopen(req)
+            data = json.loads(response.read())
 
-        time_created = datetime.datetime.strptime(
-            data['created_at'], '%Y-%m-%dT%H:%M:%SZ'
-        )
-        time_created = time_created + datetime.timedelta(hours=-5) # EST
-        time_created = time_created.strftime('%Y-%m-%d %H:%M:%S')
+            time_created = datetime.datetime.strptime(
+                data['created_at'], '%Y-%m-%dT%H:%M:%SZ'
+            )
+            time_created = time_created + datetime.timedelta(hours=-5) # EST
+            time_created = time_created.strftime('%Y-%m-%d %H:%M:%S')
 
-        time_updated = datetime.datetime.strptime(
-            data['updated_at'], '%Y-%m-%dT%H:%M:%SZ'
-        )
-        time_updated = time_updated + datetime.timedelta(hours=-5) # EST
-        time_updated = time_updated.strftime('%Y-%m-%d %H:%M:%S')
+            time_updated = datetime.datetime.strptime(
+                data['updated_at'], '%Y-%m-%dT%H:%M:%SZ'
+            )
+            time_updated = time_updated + datetime.timedelta(hours=-5) # EST
+            time_updated = time_updated.strftime('%Y-%m-%d %H:%M:%S')
 
-        df = df.append({
-            "user_name": username,
-            "user_id": data['id'],
-            "bio": data['bio'],
-            "num_followers": int(data['followers']),
-            "num_following": int(data['following']),
-            "num_repos": int(data['public_repos']),
-            "location": data['location'],
-            "time_created": time_created,
-            "time_updated": time_updated,
-            }, ignore_index=True)
+            df = df.append({
+                "user_name": username,
+                "user_id": data['id'],
+                "bio": data['bio'],
+                "num_followers": int(data['followers']),
+                "num_following": int(data['following']),
+                "num_repos": int(data['public_repos']),
+                "location": data['location'],
+                "time_created": time_created,
+                "time_updated": time_updated,
+                }, ignore_index=True)
+
+        except urllib.error.HTTPError as err:
+            if err.code == 404:
+                df = df.append({
+                    "user_name": username,
+                    "user_id": 'closed',
+                    }, ignore_index=True)
+            else:
+                raise
+
 
         if users_processed % 100 == 0:
             print("{} Users Processed: {}".format(users_processed,
@@ -85,4 +99,4 @@ def collect_profile(users_start, users_end):
     print(filename)
     df.to_csv('data/'+filename)
 
-collect_profile(0, 1)
+collect_profile(2570, 2600)
