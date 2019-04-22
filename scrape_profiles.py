@@ -33,12 +33,13 @@ def collect_profile(users_start, users_end):
     # print(df_stargazers_row)
     print("There are {} users in the stargazer file".format(df_stargazers_row))
 
+    users_end = min(users_end, df_stargazers_row)
     print(("Now Gathering Stargazers' GitHub Profiles from "
            "user {} to user {}").format(users_start, users_end))
 
-    while users_processed < users_end:
+    while users_processed < users_end and users_processed < df_stargazers_row:
         username = df_stargazers.iloc[users_processed, 1]
-        print(username)
+        # print(username)
         api = "https://api.github.com/"
         url = api + "users/{}?access_token={}".format(username, token)
         try:
@@ -99,4 +100,12 @@ def collect_profile(users_start, users_end):
     print(filename)
     df.to_csv('data/'+filename)
 
-collect_profile(2570, 2600)
+# collect_profile(0, 5000)
+# collect_profile(5000, 10000)
+# collect_profile(10000, 15000)
+# collect_profile(15000, 20000)
+# collect_profile(20000, 25000)
+# collect_profile(25000, 30000)
+# collect_profile(30000, 32500)
+# collect_profile(39980, 40000)
+collect_profile(32500, 40000)
