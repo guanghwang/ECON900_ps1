@@ -25,63 +25,65 @@ df = pd.DataFrame()
 print("Staring Gathering pulls")
 
 while page_remaining:
-    url = api + "repos/{0}/pulls?page={1}?state=all&access_token={2}".format(
+    url = api + "repos/{0}/issues?page={1}&state=all&access_token={2}".format(
         repo, page_number, access_token
     )
     req = Request(url)
     response = urlopen(req)
     data = json.loads(response.read())
-    for pull in data:
-        pull_id = pull['id']
-        title = pull['title']
-        username = pull['user']['login']
+    for issue in data:
+        issue_id = issue['id']
+        title = issue['title']
+        username = issue['user']['login']
         # print(username)
 
         created_time = datetime.datetime.strptime(
-            pull['created_at'], '%Y-%m-%dT%H:%M:%SZ'
+            issue['created_at'], '%Y-%m-%dT%H:%M:%SZ'
             ) # Zulu time(UTC)
         created_time = created_time + datetime.timedelta(hours=-5) # EST
         created_time = created_time.strftime('%Y-%m-%d %H:%M:%S')
 
         updated_time = datetime.datetime.strptime(
-            pull['updated_at'], '%Y-%m-%dT%H:%M:%SZ'
+            issue['updated_at'], '%Y-%m-%dT%H:%M:%SZ'
             ) # Zulu time(UTC)
         updated_time = updated_time + datetime.timedelta(hours=-5) # EST
         updated_time = updated_time.strftime('%Y-%m-%d %H:%M:%S')
-
-        if pull['merged_at'] == "":
-            merged_time = datetime.datetime.strptime(
-                pull['merged_at'], '%Y-%m-%dT%H:%M:%SZ'
-                ) # Zulu time(UTC)
-            merged_time = closed_time + datetime.timedelta(hours=-5) # EST
-            merged_time = closed_time.strftime('%Y-%m-%d %H:%M:%S')
+        
+        if issue['closed_at'] == None:
+            closed_time = ''
         else:
-            merged_time = ""
-
-        if pull['state'] == 'closed':
             closed_time = datetime.datetime.strptime(
-                pull['closed_at'], '%Y-%m-%dT%H:%M:%SZ'
-                ) # Zulu time(UTC)
+                issue['closed_at'], '%Y-%m-%dT%H:%M:%SZ'
+            ) # Zulu time(UTC)
             closed_time = closed_time + datetime.timedelta(hours=-5) # EST
             closed_time = closed_time.strftime('%Y-%m-%d %H:%M:%S')
+
+        if issue['pull_request'] != None:
+            pull_request = 1
+            pull_url = issue['pull_request']['url']
         else:
-            closed_time = ""
+            pull_request = 0
+            pull_url = ""
 
         # pandas append don't have inplace
         df = df.append({
-            'pull_id': pull_id,
+            'issue_id': issue_id,
             'title': title,
-            'body': pull['body'],
+            'body': issue['body'],
             'username': username,
-            'state': pull['state'],
+            'state': issue['state'],
             'created_time': created_time,
             'updated_time': updated_time,
             'closed_time': closed_time,
-            'merged_time': merged_time,
+            'pull_request': pull_request,
+            'pull_url': pull_url,
             }, ignore_index=True)
+    
+    if page_number == 0:
+        page_len = len(data)
 
     # print(len(data))
-    if len(data) < 3:
+    if len(data) < page_len:
         page_remaining = False
         print("The total page is {}".format(page_number))
     time.sleep(1)
@@ -94,10 +96,10 @@ while page_remaining:
 
     page_number += 1
 
-print("Done Gathering pulls for {}".format(repo))
+print("Done Gathering issues for {}".format(repo))
 # print(df)
 # print(df.iloc[0,])
 
 df.drop_duplicates(inplace=True)
 timestr = time.strftime("%Y%m%d_%H%M%S")
-df.to_csv('data/pulls' + timestr + '.csv')
+df.to_csv('data/issues' + timestr + '.csv')
