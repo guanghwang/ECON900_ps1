@@ -34,6 +34,7 @@ while page_remaining:
     # print(data[1])
     for repository in data:
         username = repository['owner']['login']
+        userid = int(repository['owner']['id'])
         # print(username)
 
         created_time = datetime.datetime.strptime(
@@ -57,6 +58,7 @@ while page_remaining:
         # pandas append don't have inplace
         df = df.append({
             'username': username,
+            'userid': userid,
             'created_time': created_time,
             'updated_time': updated_time,
             'pushed_time': pushed_time,
@@ -78,6 +80,6 @@ print("Done Gathering Forks for {}".format(repo))
 
 df.drop_duplicates(inplace=True)
 
-timestr = time.strftime("%Y%m%d_%H")
+timestr = time.strftime("%Y%m%d_%H%M%S")
 
 df.to_csv('data/forks' + timestr + '.csv')
