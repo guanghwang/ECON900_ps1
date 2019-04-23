@@ -6,3 +6,10 @@ GHArchive/*
 
 # ignore token
 token/
+
+# ignore latex auxiliary files
+report/report.aux
+report/report.fdb_latexmk
+report/report.fls
+report/report.log
+report/report.synctex.gz
