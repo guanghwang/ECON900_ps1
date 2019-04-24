@@ -35,7 +35,7 @@ Table \ref{tbl:mean} reports the features I use in the machine learning part. Th
 
 Considering the small number of users who submit pull requests, I use Logistic Regression classifier to predict users who would submit pull requests. Considering that users who may hear this repository from news reports and create github account thereafter, I create a variable to identify whether workers open github account before the creation of this repository. I also create the quadratic form of the number of followers, following and repositories and dummies for zero follower, following and repository respectively. These variables account for the nonlinear effects of number of followers, following and repositories on the probability of submitting pull requests.
 
-To validate the prediction from my Logistic Regression classifier, I split data into two parts: one for training with 80\% of observations and the other for validation with 20\% of observations. The accurate score is 0.9942. However, the high accurate score is caused by large number of predicted users who do not submit pull requests. The confusion matrix in Table \ref{tbl:confusion} suggests a different story from the accurate score. The machine learning algorithm I use do not predict workers who would submit pull requests well.
+To validate the prediction from my Logistic Regression classifier, I split data into two parts: one for training with 80\% of observations and the other for validation with 20\% of observations. The accurate score is 0.9942. However, the high accurate score is caused by large number of predicted users who do not submit pull requests. The confusion matrix in Table \ref{tbl:confusion} suggests a different story from the accurate score. The machine learning algorithm I use does not predict workers who would submit pull requests well.
 
 \begin{table}
     \centering
@@ -47,7 +47,7 @@ To validate the prediction from my Logistic Regression classifier, I split data 
     \end{tabular}
 \end{table}
 
-My algorithm need more adjustments in the future, such as utilizing locations of users.
+My algorithm needs more adjustments in the future, such as utilizing locations of users.
 
 %To further evaluate my algorithm, I also validate it using k fold cross validation. I split observations into 5 folders.
 %
