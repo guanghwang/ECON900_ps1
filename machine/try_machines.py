@@ -95,4 +95,4 @@ df_comparison = pd.DataFrame({
         'target': target_test,
         'pred': predictions,
         })
-pd.crosstab(df_comparison['target'], df_comparison['pred'])
+print(pd.crosstab(df_comparison['target'], df_comparison['pred']))
